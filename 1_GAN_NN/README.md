@@ -10,6 +10,6 @@ We propose a new framework for estimating generative models via an adversarial p
 
 I trained in two basic dataset are NMIST and CIFAR-10, the result bellow here
 
-![](1_GAN_NN\result\mnist.gif)
+![](./result/mnist.gif)
 
-![](1_GAN_NN\result\cifar.gif)
+![](./result/cifar.gif)
