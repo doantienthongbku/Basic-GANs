@@ -13,7 +13,7 @@ from model import *
 device = "cuda" if torch.cuda.is_available() else "cpu"
 lr = 3e-4
 z_dim = 64
-image_dim = 28 * 28 * 1
+image_dim = 32 * 32 * 3
 batch_size = 32
 num_epochs = 50
 
@@ -24,18 +24,18 @@ transform = transforms.Compose(
     [transforms.ToTensor(), transforms.Normalize((0.5, ), (0.5, ))]
 )
 
-dataset = datasets.MNIST(root="dataset/", transform=transform, download=True)
+dataset = datasets.CIFAR10(root="dataset/", transform=transform, download=True)
 loader = DataLoader(dataset, batch_size, shuffle=True)
 opt_disc = optim.Adam(disc.parameters(), lr=lr)
 opt_gen = optim.Adam(gen.parameters(), lr=lr)
 criterion = nn.BCELoss()
-writer_fake = SummaryWriter(f"logs/GAN_MNIST/fake")
-writer_real = SummaryWriter(f"logs/GAN_MNIST/real")
+writer_fake = SummaryWriter(f"logs/fake")
+writer_real = SummaryWriter(f"logs/real")
 step = 0
 
 for epoch in range(num_epochs):
     for batch_idx, (real, _) in enumerate(loader):
-        real = real.view(-1, 784).to(device)    # flatten input image
+        real = real.view(-1, image_dim).to(device)    # flatten input image
         batch_size = real.shape[0]
 
         # Train Discriminator: max log(D(real)) + log(1 - D(G(z)))
@@ -66,8 +66,8 @@ for epoch in range(num_epochs):
             )
 
             with torch.no_grad():
-                fake = gen(fixed_noise).reshape(-1, 1, 28, 28)
-                data = real.reshape(-1, 1, 28, 28)
+                fake = gen(fixed_noise).reshape(-1, 3, 32, 32)
+                data = real.reshape(-1, 3, 32, 32)
                 img_grid_fake = torchvision.utils.make_grid(fake, normalize=True)
                 img_grid_real = torchvision.utils.make_grid(data, normalize=True)
 
